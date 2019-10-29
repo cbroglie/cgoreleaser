@@ -1,35 +1,55 @@
-# This is an example goreleaser.yaml file with some sane defaults.
-# Make sure to check the documentation at http://goreleaser.com
-before:
-  hooks:
 builds:
-- id: wave
-  binary: wave
-  env:
-  - CGO_ENABLED=0
-  goos:
-  - darwin
-  - linux
-  - windows
-  goarch:
-  - amd64
-  - arm
-  - arm64
-  main: ./cmd/wave/main.go
+  - id: wave-darwin
+    binary: wave
+    env:
+      - CGO_ENABLED=1
+      - GOFLAGS=-mod=vendor
+      - GOPROXY=off
+      - CC=o64-clang
+      - CXX=o64-clang++
+    goos:
+      - darwin
+    goarch:
+      - amd64
+    main: ./cmd/wave/main.go
+  - id: wave-linux
+    binary: wave
+    env:
+      - CGO_ENABLED=1
+      - GOFLAGS=-mod=vendor
+      - GOPROXY=off
+    goos:
+      - linux
+    goarch:
+      - amd64
+    main: ./cmd/wave/main.go
+  - id: wave-windows
+    binary: wave
+    env:
+      - CGO_ENABLED=1
+      - GOFLAGS=-mod=vendor
+      - GOPROXY=off
+      - CC=x86_64-w64-mingw32-gcc
+      - CXX=x86_64-w64-mingw32-g++
+    goos:
+      - windows
+    goarch:
+      - amd64
+    main: ./cmd/wave/main.go
 archives:
-- format: binary
+  - format: binary
 release:
   github:
     owner: cbroglie
     name: cgoreleaser
   prerelease: auto
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
   name_template: "{{ .Tag }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
+      - "^docs:"
+      - "^test:"
